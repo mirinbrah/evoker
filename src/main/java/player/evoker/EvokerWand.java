@@ -41,6 +41,7 @@ public final class EvokerWand extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             long now = System.currentTimeMillis();
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // Логика барьера
                 if (activeBarriers.containsKey(player.getUniqueId()) && activeBarriers.get(player.getUniqueId()) > now) {
                     player.getWorld().spawnParticle(Particle.ENCHANT, player.getLocation().add(0, 1, 0), 20, 1.5, 1, 1.5, 0.1);
                     for (Entity entity : player.getNearbyEntities(4, 4, 4)) {
@@ -52,8 +53,32 @@ public final class EvokerWand extends JavaPlugin implements Listener {
                         }
                     }
                 }
+
+                // Отображение кулдаунов на хотбаре
+                if (isWand(player.getInventory().getItemInMainHand())) {
+                    sendCooldownActionBar(player, now);
+                }
             }
-        }, 0L, 2L);
+        }, 0L, 5L); // Обновление каждые 5 тиков для плавности
+    }
+
+    private void sendCooldownActionBar(Player p, long now) {
+        long lkmTime = (lkmCooldowns.getOrDefault(p.getUniqueId(), 0L) - now) / 1000;
+        long pkmTime = (pkmCooldowns.getOrDefault(p.getUniqueId(), 0L) - now) / 1000;
+
+        Component lkmPart = lkmTime > 0
+                ? Component.text("ЛКМ: " + lkmTime + "с", NamedTextColor.RED)
+                : Component.text("ЛКМ: Готов", NamedTextColor.GREEN);
+
+        Component pkmPart = pkmTime > 0
+                ? Component.text("ПКМ: " + pkmTime + "с", NamedTextColor.RED)
+                : Component.text("ПКМ: Готов", NamedTextColor.GREEN);
+
+        p.sendActionBar(Component.text("[ ", NamedTextColor.GRAY)
+                .append(lkmPart)
+                .append(Component.text(" | ", NamedTextColor.GRAY))
+                .append(pkmPart)
+                .append(Component.text(" ]", NamedTextColor.GRAY)));
     }
 
     @Override
