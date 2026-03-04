@@ -1,4 +1,14 @@
 name: evoker
 version: '1.0-SNAPSHOT'
-main: player.evoker.Evoker
+main: player.evoker.EvokerWand
 api-version: '1.21'
+commands:
+  giveevo:
+    description: Выдать палку суммонерку
+    permission: evoker.give
+    permission-message: "У вас нет прав!"
+
+permissions:
+  evoker.give:
+    description: Право на получение арбалета
+    default: op
