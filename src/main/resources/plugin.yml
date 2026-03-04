@@ -1,0 +1,4 @@
+name: evoker
+version: '1.0-SNAPSHOT'
+main: player.evoker.Evoker
+api-version: '1.21'
